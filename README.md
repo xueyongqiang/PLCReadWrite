@@ -100,11 +100,11 @@ OMRON_NODE = 1             # FINS节点号（默认1）
 
 实现电脑开机后，程序后台无窗口运行，自动采集PLC数据：
 
-1. 将 plc_all_master.py 重命名为 plc_all_master.pyw（.pyw后缀可实现无黑窗口运行）
+1. 将 app.py 重命名为 app.pyw（.pyw后缀可实现无黑窗口运行）
 
 2. 按 Win + R，输入 shell:startup，打开开机启动文件夹
 
-3. 右键桌面 → 新建 → 快捷方式，位置填写：pythonw.exe D:\你的程序路径\plc_all_master.pyw（替换为实际路径）
+3. 右键桌面 → 新建 → 快捷方式，位置填写：pythonw.exe D:\你的程序路径\app.pyw（替换为实际路径）
 
 4. 将创建的快捷方式，拖入步骤2打开的开机启动文件夹，重启电脑即可自动运行
 
