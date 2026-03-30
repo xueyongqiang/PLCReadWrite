@@ -46,7 +46,7 @@ python -m pip install python-snap7 pymcprotocol omronfins
 
 说明
 
-plc_all_master.py
+app.py
 
 核心程序文件，包含三大PLC读写逻辑、自动重连、全类型支持
 
@@ -56,7 +56,7 @@ README.md
 
 使用配置（核心步骤）
 
-打开 plc_all_master.py，找到【PLC 选择配置】区域，仅需修改以下内容，无需改动其他代码：
+打开 app.py，找到【PLC 选择配置】区域，仅需修改以下内容，无需改动其他代码：
 
 # ======================== 【PLC 选择】只改这里 ========================
 PLC_TYPE = "S7"            # 选择PLC品牌：S7=西门子 / Mitsubishi=三菱 / Omron=欧姆龙
