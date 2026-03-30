@@ -1,43 +1,48 @@
-import subprocess
+import cv2
+import pyttsx3
 import time
-import re
 
-# 只靠系统语音，最稳定
-def speak(text):
-    # 强制单线程、等播放完才返回
-    ps = f'Add-Type -AssemblyName System.Speech; $s = New-Object System.Speech.Synthesis.SpeechSynthesizer; $s.Speak(\'{text.replace("\'", "")}\');'
-    subprocess.run(
-        ["powershell", "-NoProfile", "-Command", ps],
-        creationflags=subprocess.CREATE_NO_WINDOW
-    )
+# 初始化语音
+engine = pyttsx3.init()
+engine.setProperty('rate', 160)  # 语速
 
-def play():
-    with open("script.txt", "r", encoding="utf-8") as f:
-        lines = f.readlines()
+def say(text):
+    engine.say(text)
+    engine.runAndWait()
 
-    print("===== 逐句播放开始 =====\n")
+# 打开笔记本摄像头（0 就是自带摄像头）
+cap = cv2.VideoCapture(0)
 
-    for line in lines:
-        line = line.strip()
-        if not line:
-            time.sleep(0.3)
-            continue
+# 用人脸检测来判断有没有人
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-        # 匹配角色
-        match = re.match(r"^(.+?)[:：](.+)", line)
-        if match:
-            role = match.group(1).strip()
-            content = match.group(2).strip()
-            print(f"【{role}】{content}")
-            speak(content)
-        else:
-            print(line)
-            speak(line)
+last_welcome = 0
+cooldown = 5  # 5秒内不重复喊
 
-        # 关键：强制等一下，不让系统吞句子
-        time.sleep(0.5)
+print("已启动监控，有人就会播报")
 
-    print("\n播放完毕")
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
 
-if __name__ == "__main__":
-    play()
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+
+    # 画出人脸框
+    for (x, y, w, h) in faces:
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+    # 检测到人
+    if len(faces) > 0:
+        if time.time() - last_welcome > cooldown:
+            say("欢迎光临，我已经看到你了")
+            last_welcome = time.time()
+
+    cv2.imshow("Camera Monitor", frame)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
